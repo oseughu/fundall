@@ -7,11 +7,10 @@ const port = process.env.PORT || 3000
 const Joi = require('joi')
 const morgan = require('morgan')
 const passport = require('passport')
-var LocalStrategy = require('passport-local')
 const jwt = require('jsonwebtoken')
+require('./auth/passport')
 
 const { sequelize, User, Transaction, Card } = require('./models')
-const user = require('./models/user')
 
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
@@ -25,37 +24,6 @@ app.use(
   })
 )
 
-app.use(passport.initialize())
-app.use(passport.session())
-
-//Create passport strategy for user authentication
-passport.use(
-  new LocalStrategy(function (email, password, done) {
-    User.findOne({ username: email }, function (err, user) {
-      if (err) {
-        return done(err)
-      }
-      if (!user) {
-        return done(null, false)
-      }
-      if (!user.verifyPassword(password)) {
-        return done(null, false)
-      }
-      return done(null, user)
-    })
-  })
-)
-
-passport.serializeUser(function (user, done) {
-  done(null, user.id)
-})
-
-passport.deserializeUser(function (id, done) {
-  User.findOne({ where: { id: user.id } }, function (err, user) {
-    done(err, user)
-  })
-})
-
 app.post('/login', async (req, res) => {
   const { email, password } = req.body
 
@@ -67,22 +35,13 @@ app.post('/login', async (req, res) => {
     } else if (user.password != password) {
       return res.json({ message: 'Email or password does not match!' })
     } else {
-      const user = new User({
-        //Local authentication checks if username and password match
-        username: email,
-        password
-      })
-      req.login(user, err => {
-        if (err) {
-          console.log(err)
-        } else {
-          passport.authenticate('local')(req, res, () => {
-            res.redirect('images')
-          })
-        }
-      })
+      const jwtToken = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.SECRET
+      )
       return res.json({
-        msg: 'Welcome to Fundall!!'
+        msg: 'Welcome to Fundall!!',
+        token: jwtToken
       })
     }
   } catch (err) {
@@ -116,9 +75,12 @@ app.post('/signup', async (req, res) => {
   }
 })
 
-app.get('/user/:uuid', async (req, res) => {
-  const uuid = req.params.uuid
-  if (req.isAuthenticated()) {
+app.get(
+  '/user/:uuid',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const uuid = req.params.uuid
+
     try {
       const user = await User.findOne({
         where: { uuid },
@@ -130,15 +92,15 @@ app.get('/user/:uuid', async (req, res) => {
       console.log(err)
       return res.status(500).json({ error: 'Something went wrong.' })
     }
-  } else {
-    return res.json({ error: 'User not logged in.' })
   }
-})
+)
 
-app.get('/:uuid/cards', async (req, res) => {
-  const userUuid = req.params.uuid
+app.get(
+  '/:uuid/cards',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const userUuid = req.params.uuid
 
-  if (req.isAuthenticated()) {
     try {
       const user = await User.findOne({
         where: { uuid: userUuid }
@@ -151,14 +113,15 @@ app.get('/:uuid/cards', async (req, res) => {
       console.log(err)
       return res.status(500).json({ error: 'Something went wrong.' })
     }
-  } else {
-    return res.json({ error: 'User not logged in.' })
   }
-})
+)
 
-app.post('/request-card', async (req, res) => {
-  const { userUuid, card_type, card_cost } = req.body
-  if (req.isAuthenticated()) {
+app.post(
+  '/request-card',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { userUuid, card_type, card_cost } = req.body
+
     try {
       const user = await User.findOne({
         where: { uuid: userUuid }
@@ -174,15 +137,15 @@ app.post('/request-card', async (req, res) => {
       console.log(err)
       return res.status(500).json(err)
     }
-  } else {
-    return res.json({ error: 'User not logged in.' })
   }
-})
+)
 
-app.post('/pay', async (req, res) => {
-  const { userUuid, transaction_name, transaction_amount } = req.body
+app.post(
+  '/pay',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { userUuid, transaction_name, transaction_amount } = req.body
 
-  if (req.isAuthenticated()) {
     try {
       const user = await User.findOne({
         where: { uuid: userUuid }
@@ -192,26 +155,26 @@ app.post('/pay', async (req, res) => {
         transaction_name,
         transaction_amount
       })
-      payment.save()
+      await payment.save()
       return res.json(payment)
     } catch (err) {
       console.log(err)
       return res.status(500).json(err)
     }
-  } else {
-    return res.json({ error: 'User not logged in.' })
   }
-})
+)
 
-app.get('/:uuid/transactions', async (req, res) => {
-  const userUuid = req.params.uuid
+app.get(
+  '/:uuid/transactions',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const userUuid = req.params.uuid
 
-  if (req.isAuthenticated()) {
     try {
       const user = await User.findOne({
         where: { uuid: userUuid }
       })
-      const transactions = Transaction.findAll({
+      const transactions = await Transaction.findAll({
         where: { userId: user.id }
       })
       return res.json(transactions)
@@ -219,10 +182,8 @@ app.get('/:uuid/transactions', async (req, res) => {
       console.log(err)
       return res.status(500).json({ error: 'Something went wrong.' })
     }
-  } else {
-    return res.json({ error: 'User not logged in.' })
   }
-})
+)
 
 app.listen(port, async () => {
   console.log('Server started successfully!')
