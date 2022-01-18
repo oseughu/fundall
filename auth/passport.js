@@ -8,12 +8,17 @@ const User = require('../models/user')
 passport.use(
   new StrategyJwt(
     {
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromHeader(),
       secretOrKey: process.env.SECRET
     },
-    (jwtPayload, done) => {
-      const user = User.findOne({ where: { id: jwtPayload.id } })
-      return done(null, user)
+    async (jwtPayload, done) => {
+      try {
+        const user = await User.findOne({ where: { id: jwtPayload.id } })
+        return done(null, user)
+      } catch (error) {
+        console.log(err)
+        return done(err)
+      }
     }
   )
 )
