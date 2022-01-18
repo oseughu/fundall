@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000
 const Joi = require('joi')
 const morgan = require('morgan')
 const passport = require('passport')
+var LocalStrategy = require('passport-local')
 const jwt = require('jsonwebtoken')
 
 const { sequelize, User, Transaction, Card } = require('./models')
@@ -28,15 +29,32 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 //Create passport strategy for user authentication
-passport.use(User.createStrategy())
+passport.use(
+  new LocalStrategy(function (email, password, done) {
+    User.findOne({ username: email }, function (err, user) {
+      if (err) {
+        return done(err)
+      }
+      if (!user) {
+        return done(null, false)
+      }
+      if (!user.verifyPassword(password)) {
+        return done(null, false)
+      }
+      return done(null, user)
+    })
+  })
+)
 
-passport.serializeUser(function (user, done) {
-  done(null, user.id)
+passport.serializeUser(function (user, cb) {
+  process.nextTick(function () {
+    cb(null, { id: user.id, username: user.username })
+  })
 })
 
-passport.deserializeUser(function (id, done) {
-  User.findOne({ where: { id: user.id } }, function (err, user) {
-    done(err, user)
+passport.deserializeUser(function (user, cb) {
+  process.nextTick(function () {
+    return cb(null, user)
   })
 })
 
