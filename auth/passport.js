@@ -12,7 +12,7 @@ passport.use(
       secretOrKey: process.env.SECRET
     },
     (jwtPayload, done) => {
-      const user = await User.findOne({ where: { id: jwtPayload.id } })
+      const user = User.findOne({ where: { id: jwtPayload.id } })
       return done(null, user)
     }
   )
