@@ -24,9 +24,6 @@ app.use(
   })
 )
 
-app.use(passport.initialize())
-app.use(passport.session())
-
 app.post('/login', async (req, res) => {
   const { email, password } = req.body
 
