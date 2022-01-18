@@ -154,7 +154,7 @@ app.post(
         transaction_name,
         transaction_amount
       })
-      await payment.save()
+      payment.save()
       return res.json(payment)
     } catch (err) {
       console.log(err)
@@ -172,7 +172,7 @@ app.get(
       const user = await User.findOne({
         where: { uuid: userUuid }
       })
-      const transactions = await Transaction.findAll({
+      const transactions = Transaction.findAll({
         where: { userId: user.id }
       })
       return res.json(transactions)
@@ -184,7 +184,11 @@ app.get(
 )
 
 app.listen(port, async () => {
-  console.log('Server started successfully!')
-  await sequelize.authenticate()
-  console.log('Database connected!')
+  try {
+    console.log('Server started successfully!')
+    await sequelize.authenticate()
+    console.log('Database connected!')
+  } catch (err) {
+    console.log(err)
+  }
 })
