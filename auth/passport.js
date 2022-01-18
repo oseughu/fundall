@@ -15,7 +15,7 @@ passport.use(
       try {
         const user = await User.findOne({ where: { id: jwtPayload.id } })
         return done(null, user)
-      } catch (error) {
+      } catch (err) {
         console.log(err)
         return done(err)
       }
