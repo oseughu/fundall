@@ -95,9 +95,11 @@ app.get(
   async (req, res) => {
     const userUuid = req.params.uuid
     try {
+      const user = await User.findOne({
+        where: { uuid: userUuid }
+      })
       const cards = await Card.findAll({
-        where: { uuid: userUuid },
-        include: 'user'
+        where: { userId: user.id }
       })
       return res.json(cards)
     } catch (err) {
@@ -161,9 +163,11 @@ app.get(
   async (req, res) => {
     const userUuid = req.params.uuid
     try {
+      const user = await User.findOne({
+        where: { uuid: userUuid }
+      })
       const transactions = await Transaction.findAll({
-        where: { uuid: userUuid },
-        include: 'user'
+        where: { userId: user.id }
       })
       return res.json(transactions)
     } catch (err) {
