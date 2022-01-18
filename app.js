@@ -2,6 +2,7 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
+const session = require('express-session')
 const port = process.env.PORT || 3000
 const Joi = require('joi')
 const morgan = require('morgan')
@@ -14,6 +15,14 @@ const { sequelize, User, Transaction, Card } = require('./models')
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true
+  })
+)
 
 app.use(passport.initialize())
 app.use(passport.session())
