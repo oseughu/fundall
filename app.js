@@ -75,31 +75,25 @@ app.post('/signup', async (req, res) => {
   }
 })
 
-app.get('/users', async (req, res) => {
-  try {
-    const users = await User.findAll()
-    return res.json(users)
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ error: 'Something went wrong.' })
+app.get(
+  '/user/:uuid',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const uuid = req.params.uuid
+
+    try {
+      const user = await User.findOne({
+        where: { uuid },
+        include: ['transactions', 'cards']
+      })
+
+      return res.json(user)
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({ error: 'Something went wrong.' })
+    }
   }
-})
-
-app.get('/user/:uuid', async (req, res) => {
-  const uuid = req.params.uuid
-
-  try {
-    const user = await User.findOne({
-      where: { uuid },
-      include: ['transactions', 'cards']
-    })
-
-    return res.json(user)
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ error: 'Something went wrong.' })
-  }
-})
+)
 
 app.get(
   '/:uuid/cards',
@@ -120,7 +114,7 @@ app.get(
 )
 
 app.post(
-  '/cards',
+  '/request-card',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { userUuid, card_type, card_cost } = req.body
@@ -129,11 +123,12 @@ app.post(
       const user = await User.findOne({
         where: { uuid: userUuid }
       })
-      const card = await Card.create({
+      const card = new Card({
         userId: user.id,
         card_type,
         card_cost
       })
+      await card.save()
       return res.json(card)
     } catch (err) {
       console.log(err)
@@ -152,12 +147,13 @@ app.post(
       const user = await User.findOne({
         where: { uuid: userUuid }
       })
-      const transaction = await Transaction.create({
+      const newPayment = new Transaction({
         userId: user.id,
         transaction_name,
         transaction_amount
       })
-      return res.json(transaction)
+      await newPayment.save()
+      return res.json(newPayment)
     } catch (err) {
       console.log(err)
       return res.status(500).json(err)
