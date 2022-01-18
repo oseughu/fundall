@@ -8,7 +8,7 @@ const Joi = require('joi')
 const morgan = require('morgan')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
-require('./auth/passport')
+require('./auth/passport')(passport)
 
 const { sequelize, User, Transaction, Card } = require('./models')
 
