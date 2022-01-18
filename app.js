@@ -2,8 +2,8 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
-const session = require('express-session')
 const port = process.env.PORT || 3000
+const Joi = require('joi')
 const morgan = require('morgan')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
@@ -14,15 +14,6 @@ const { sequelize, User, Transaction, Card } = require('./models')
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-
-//Use express-session to save cookies and user data
-app.use(
-  session({
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: true
-  })
-)
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -42,7 +33,10 @@ app.post('/login', async (req, res) => {
         { id: user.id, email: user.email },
         process.env.SECRET
       )
-      return res.json({ msg: 'Welcome to fundall!', token: jwtToken })
+      return res.json({
+        msg: 'Welcome to Fundall! Please copy your jwt token to view your cards and transactions!',
+        token: jwtToken
+      })
     }
   } catch (err) {
     console.log(err)
@@ -138,7 +132,7 @@ app.post(
 )
 
 app.post(
-  '/transactions',
+  '/pay',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { userUuid, transaction_name, transaction_amount } = req.body
@@ -147,13 +141,13 @@ app.post(
       const user = await User.findOne({
         where: { uuid: userUuid }
       })
-      const newPayment = new Transaction({
+      const payment = new Transaction({
         userId: user.id,
         transaction_name,
         transaction_amount
       })
-      await newPayment.save()
-      return res.json(newPayment)
+      await payment.save()
+      return res.json(payment)
     } catch (err) {
       console.log(err)
       return res.status(500).json(err)
