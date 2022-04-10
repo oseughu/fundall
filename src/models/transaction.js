@@ -1,5 +1,5 @@
 'use strict'
-import { Sequelize, DataTypes, Model } from 'sequelize'
+import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '#config/db'
 
 class Transaction extends Model {
