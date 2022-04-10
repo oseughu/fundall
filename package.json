@@ -2,9 +2,22 @@
   "name": "fundall",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*.js",
+    "#auth/*": "./src/auth/*.js",
+    "#config/*": "./src/config/*.js",
+    "#controllers/*": "./src/controllers/*.js",
+    "#migrations/*": "./src/models/*.js",
+    "#models": "./src/models/index.js",
+    "#models/*": "./src/models/*.js",
+    "#routes": "./src/routes/index.js",
+    "#routes/*": "./src/routes/*.js"
+  },
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app",
+    "dev": "nodemon --exec node app"
   },
   "keywords": [],
   "author": "",

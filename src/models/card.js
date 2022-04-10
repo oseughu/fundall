@@ -1,6 +1,7 @@
 'use strict'
-const { Model } = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize'
+
+export const Card = (sequelize, DataTypes) => {
   class Card extends Model {
     /**
      * Helper method for defining associations.
