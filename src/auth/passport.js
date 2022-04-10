@@ -1,6 +1,6 @@
 import passport from 'passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { User } from '#models/user'
+import User from '#models/user'
 
 new Strategy(
   {

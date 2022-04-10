@@ -1,52 +1,52 @@
 'use strict'
-import { Model } from 'sequelize'
+import { Sequelize, DataTypes, Model } from 'sequelize'
+import { sequelize } from '#config/db'
 
-export const Transaction = (sequelize, DataTypes) => {
-  class Transaction extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate({ User }) {
-      // define association here
-      this.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-    }
+class Transaction extends Model {
+  /**
+   * Helper method for defining associations.
+   * This method is not a part of Sequelize lifecycle.
+   * The `models/index` file will call this method automatically.
+   */
+  static associate({ User }) {
+    // define association here
+    this.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+  }
 
-    toJSON() {
-      return {
-        ...this.get(),
-        id: undefined,
-        userId: undefined
-      }
+  toJSON() {
+    return {
+      ...this.get(),
+      id: undefined,
+      userId: undefined
     }
   }
-  Transaction.init(
-    {
-      uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },
-      transaction_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: 'Please enter a name for this transaction' },
-          notEmpty: { msg: 'Transaction Name cannot be blank' }
-        }
-      },
-      transaction_amount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-          notNull: { msg: 'Please enter an amount for this transaction' },
-          notEmpty: { msg: 'Amount cannot be blank' },
-          isDecimal: { msg: 'Please enter a valid amount' }
-        }
+}
+Transaction.init(
+  {
+    uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },
+    transaction_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Please enter a name for this transaction' },
+        notEmpty: { msg: 'Transaction Name cannot be blank' }
       }
     },
-    {
-      sequelize,
-      tableName: 'transactions',
-      modelName: 'Transaction'
+    transaction_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Please enter an amount for this transaction' },
+        notEmpty: { msg: 'Amount cannot be blank' },
+        isDecimal: { msg: 'Please enter a valid amount' }
+      }
     }
-  )
-  return Transaction
-}
+  },
+  {
+    sequelize,
+    tableName: 'transactions',
+    modelName: 'Transaction'
+  }
+)
+
+export default Transaction
