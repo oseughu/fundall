@@ -9,7 +9,6 @@
     "#config/*": "./src/config/*.js",
     "#controllers/*": "./src/controllers/*.js",
     "#migrations/*": "./src/models/*.js",
-    "#models": "./src/models/index.js",
     "#models/*": "./src/models/*.js",
     "#routes": "./src/routes/index.js",
     "#routes/*": "./src/routes/*.js"
@@ -23,16 +22,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.0.1",
-    "dotenv": "^14.1.0",
-    "express": "^4.17.2",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
     "express-session": "^1.17.2",
-    "joi": "^17.5.0",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "sequelize": "^6.13.0"
+    "sequelize": "^6.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

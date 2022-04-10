@@ -17,4 +17,6 @@ new Strategy(
   }
 )
 
-export const passportMiddleware = passport.authenticate('jwt', { session: false })
+export const passportMiddleware = passport.authenticate('jwt', {
+  session: false
+})
