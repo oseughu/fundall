@@ -2,7 +2,7 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '#config/db'
 
-class Transaction extends Model {
+export default class Transaction extends Model {
   /**
    * Helper method for defining associations.
    * This method is not a part of Sequelize lifecycle.
@@ -48,5 +48,3 @@ Transaction.init(
     modelName: 'Transaction'
   }
 )
-
-export default Transaction

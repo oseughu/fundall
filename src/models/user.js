@@ -2,7 +2,7 @@
 import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '#config/db'
 
-class User extends Model {
+export default class User extends Model {
   /**
    * Helper method for defining associations.
    * This method is not a part of Sequelize lifecycle.
@@ -77,5 +77,3 @@ User.init(
     modelName: 'User'
   }
 )
-
-export default User
