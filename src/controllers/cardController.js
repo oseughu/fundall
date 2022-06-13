@@ -1,5 +1,5 @@
-import User from '#models/user'
 import Card from '#models/card'
+import User from '#models/user'
 
 export const getCard = async (req, res) => {
   const { uuid, card_type, card_cost } = req.body

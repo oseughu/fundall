@@ -1,6 +1,6 @@
-import User from '#models/user'
 import Card from '#models/card'
 import Transaction from '#models/transaction'
+import User from '#models/user'
 
 export const getUser = async (req, res) => {
   const { uuid } = req.params

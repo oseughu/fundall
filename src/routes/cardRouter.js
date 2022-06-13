@@ -1,6 +1,6 @@
-import { Router } from 'express'
 import { passportMiddleware } from '#auth/passport'
 import { getCard } from '#controllers/cardController'
+import { Router } from 'express'
 
 export const cardRouter = Router()
 

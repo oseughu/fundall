@@ -1,6 +1,6 @@
 'use strict'
-import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '#config/db'
+import { DataTypes, Model } from 'sequelize'
 
 export default class Transaction extends Model {
   /**

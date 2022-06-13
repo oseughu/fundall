@@ -1,8 +1,6 @@
-import { Router } from 'express'
 import { passportMiddleware } from '#auth/passport'
-import { getUser } from '#controllers/userController'
-import { getUserCards } from '#controllers/userController'
-import { getUserTransactions } from '#controllers/userController'
+import { getUser, getUserCards, getUserTransactions } from '#controllers/userController'
+import { Router } from 'express'
 
 export const userRouter = Router()
 

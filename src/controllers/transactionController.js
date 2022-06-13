@@ -1,5 +1,5 @@
-import User from '#models/user'
 import Transaction from '#models/transaction'
+import User from '#models/user'
 
 export const payController = async (req, res) => {
   const { userUuid, transaction_name, transaction_amount } = req.body
