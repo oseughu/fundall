@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 export async function up(queryInterface, DataTypes) {
   await queryInterface.createTable('cards', {
     id: {
@@ -28,8 +28,8 @@ export async function up(queryInterface, DataTypes) {
       allowNull: false,
       type: DataTypes.DATE
     }
-  });
+  })
 }
 export async function down(queryInterface, DataTypes) {
-  await queryInterface.dropTable('cards');
+  await queryInterface.dropTable('cards')
 }
