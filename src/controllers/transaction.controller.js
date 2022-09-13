@@ -1,7 +1,7 @@
 import Transaction from '#models/transaction'
 import User from '#models/user'
 
-export const payController = async (req, res) => {
+const pay = async (req, res) => {
   const { userUuid, transaction_name, transaction_amount } = req.body
 
   try {
@@ -19,3 +19,5 @@ export const payController = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong.' })
   }
 }
+
+export default pay

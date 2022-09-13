@@ -1,5 +1,5 @@
 'use strict'
-import { sequelize } from '#config/db'
+import sequelize from '#utils/db'
 import { DataTypes, Model } from 'sequelize'
 
 export default class Transaction extends Model {
@@ -21,6 +21,7 @@ export default class Transaction extends Model {
     }
   }
 }
+
 Transaction.init(
   {
     uuid: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },

@@ -1,14 +1,11 @@
-import { cardRouter } from '#routes/cardRouter'
-import { loginRouter } from '#routes/loginRouter'
-import { registerRouter } from '#routes/registerRouter'
-import { transactionRouter } from '#routes/transactionRouter'
-import { userRouter } from '#routes/userRouter'
+import authRouter from '#routes/auth.route'
+import cardRouter from '#routes/card.route'
+import transactionRouter from '#routes/transaction.route'
+import userRouter from '#routes/user.route'
 import { Router } from 'express'
 
-export const routes = Router()
+const routes = Router()
 
-routes.use(cardRouter)
-routes.use(loginRouter)
-routes.use(registerRouter)
-routes.use(transactionRouter)
-routes.use(userRouter)
+routes.use(cardRouter, authRouter, transactionRouter, userRouter)
+
+export default routes
