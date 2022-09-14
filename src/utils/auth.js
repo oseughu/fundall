@@ -1,4 +1,5 @@
 import User from '#models/user'
+import 'dotenv/config'
 import passport from 'passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
