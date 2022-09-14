@@ -1,4 +1,5 @@
 import User from '#models/user'
+import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
@@ -15,7 +16,7 @@ export const register = async (req, res) => {
         last_name,
         phone,
         email,
-        password
+        password: await bcrypt.hash(password, 10)
       })
       await user.save()
       res.json(user)
@@ -32,19 +33,19 @@ export const login = async (req, res) => {
 
   try {
     if (!user) {
-      res.json({ message: 'Email or password does not match!' })
-    } else if (user.password != password) {
-      res.json({ message: 'Email or password does not match!' })
-    } else {
-      const jwtToken = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.SECRET
-      )
-      res.json({
-        msg: 'Welcome to Fundall!!',
-        token: jwtToken
-      })
+      res.status(401).json({ message: 'Invalid credentials.' })
     }
+
+    await bcrypt.compare(password, user.password)
+
+    const jwtToken = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.SECRET
+    )
+    res.json({
+      msg: 'Welcome to Fundall!!',
+      token: jwtToken
+    })
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong.' })
   }
