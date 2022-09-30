@@ -28,7 +28,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body
-
+  
   const user = await User.findOne({ where: { email } })
 
   try {
@@ -43,7 +43,7 @@ export const login = async (req, res) => {
       process.env.SECRET
     )
     res.json({
-      msg: 'Welcome to Fundall!!',
+      msg: 'Welcome to Fundall.',
       token: jwtToken
     })
   } catch (err) {
